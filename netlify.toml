@@ -1,0 +1,8 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/notion/*"
+  to = "/.netlify/functions/notion-proxy"
+  status = 200
