@@ -1,3 +1,13 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+[[redirects]]
+  from = "/"
+  to = "/DAC_GV_Social_Hub_v6.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/notion"
+  to = "/.netlify/functions/notion-proxy"
+  status = 200
