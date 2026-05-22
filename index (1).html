@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAC · GV Social Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F7F4EF;--ink:#1A1814;--ink-l:#6B6760;--ink-f:#C2BDB6;--green:#1C6B4A;--green-l:#E6F2EC;--amber:#B8720A;--amber-l:#FBF0DF;--red:#A82828;--red-l:#FAEAEA;--blue:#1A5898;--blue-l:#E6EFF9;--purple:#4A3AA8;--purple-l:#EEEDFB;--teal:#0E7E7E;--teal-l:#E0F2F2;--border:#E0DAD2;--white:#FFF;--r:8px;--rlg:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5;}
+.hdr{background:var(--ink);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;}
+.mark{font-family:'DM Serif Display',serif;font-size:19px;color:#fff;letter-spacing:-.2px;}
+.hdr-r{display:flex;align-items:center;gap:12px;}
+.hdr-date{font-size:12px;color:rgba(255,255,255,.35);}
+.api-status{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+.api-status.ok{color:#6DCEA0;border-color:rgba(109,206,160,.3);}
+.nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 24px;gap:0;overflow-x:auto;}
+.nav-btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-l);background:none;border:none;border-bottom:2.5px solid transparent;padding:14px 16px 12px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
+.nav-btn:hover{color:var(--ink);}
+.nav-btn.active{color:var(--ink);border-bottom-color:var(--ink);}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:middle;margin-top:-2px;}
+.panel{display:none;padding:24px;max-width:1100px;margin:0 auto;}
+.panel.active{display:block;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:20px 22px;}
+.card+.card{margin-top:12px;}
+.sh{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-f);margin:24px 0 10px;}
+.sh:first-child{margin-top:0;}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;line-height:1.6;white-space:nowrap;}
+.b-g{background:var(--green-l);color:var(--green);}
+.b-a{background:var(--amber-l);color:var(--amber);}
+.b-r{background:var(--red-l);color:var(--red);}
+.b-b{background:var(--blue-l);color:var(--blue);}
+.b-p{background:var(--purple-l);color:var(--purple);}
+.b-t{background:var(--teal-l);color:var(--teal);}
+.b-gr{background:#ECEAE6;color:var(--ink-l);}
+.b-ink{background:var(--ink);color:var(--white);}
+.form-row{display:grid;gap:12px;margin-bottom:12px;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.c1{grid-template-columns:1fr;}
+label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-l);display:block;margin-bottom:5px;}
+input[type=text],input[type=date],select,textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;transition:border-color .15s;outline:none;}
+input[type=text]:focus,input[type=date]:focus,select:focus,textarea:focus{border-color:var(--ink);background:var(--white);}
+textarea{min-height:100px;resize:vertical;line-height:1.6;}
+.chip-area{background:var(--cream);border-radius:var(--r);padding:12px 14px;border:1px solid var(--border);}
+.chip-lbl{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-f);margin-bottom:8px;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;}
+.chip{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--ink-l);cursor:pointer;transition:all .12s;}
+.chip:hover{border-color:var(--ink-l);color:var(--ink);}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--white);}
+.btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--r);border:1px solid var(--border);background:var(--white);color:var(--ink);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:var(--cream);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-p{background:var(--ink);color:var(--white);border-color:var(--ink);}
+.btn-p:hover{background:#2C2920;}
+.btn-g{background:var(--green);color:var(--white);border-color:var(--green);}
+.btn-g:hover{background:#155236;}
+.btn-b{background:var(--blue);color:var(--white);border-color:var(--blue);}
+.btn-b:hover{background:#144480;}
+.btn-t{background:var(--teal);color:var(--white);border-color:var(--teal);}
+.btn-canva{background:#7D2AE8;color:var(--white);border-color:#7D2AE8;}
+.btn-canva:hover{background:#6B20D0;}
+.btn-sm{font-size:11px;padding:4px 10px;}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;align-items:center;flex-wrap:wrap;}
+.voice-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.toast{font-size:12px;font-weight:500;display:none;}
+.ai-box{background:var(--green-l);border:1px solid #B8DCCC;border-radius:var(--rlg);padding:16px 18px;margin-top:12px;display:none;}
+.ai-box-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+.ai-result{font-size:13px;line-height:1.7;color:var(--ink);white-space:pre-wrap;word-break:break-word;}
+.ai-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+.spinner-dark{border:2px solid rgba(26,24,20,.15);border-top-color:var(--ink);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:16px 18px;margin-bottom:10px;position:relative;overflow:hidden;}
+.post-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.post-card.draft::before{background:var(--amber);}
+.post-card.approved::before{background:var(--green);}
+.post-card.posted::before{background:var(--ink-f);}
+.post-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+.post-copy{font-size:13px;line-height:1.7;color:var(--ink);background:var(--cream);border-radius:var(--r);padding:10px 12px;margin:8px 0;white-space:pre-wrap;word-break:break-word;}
+.post-tags{font-size:11px;color:var(--blue);margin:4px 0;}
+.post-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.post-date{font-size:11px;color:var(--ink-f);}
+.post-actions{display:flex;gap:5px;flex-wrap:wrap;}
+.queue-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.fpills{display:flex;gap:5px;flex-wrap:wrap;}
+.fpill{font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--ink-l);cursor:pointer;transition:all .12s;}
+.fpill.on{background:var(--ink);border-color:var(--ink);color:var(--white);}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-f);text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--border);}
+td{padding:10px 10px 10px 0;border-bottom:1px solid #F0EDE8;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+.t-name{font-weight:600;color:var(--ink);display:block;}
+.t-role,.t-why{font-size:11px;color:var(--ink-l);line-height:1.5;}
+.t-handle{font-size:11px;color:var(--blue);}
+.t-handle.none{color:var(--ink-f);font-style:italic;}
+.sbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.sbar input,.sbar select{flex:1;min-width:140px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.stat-val{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:11px;color:var(--ink-l);}
+.gap-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:16px 18px;margin-bottom:10px;}
+.gap-card.urg{border-left:3px solid var(--red);border-top-left-radius:0;border-bottom-left-radius:0;}
+.gap-card.new{border-left:3px solid var(--green);border-top-left-radius:0;border-bottom-left-radius:0;}
+.gap-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.gap-title{font-weight:600;color:var(--ink);font-size:14px;}
+.gap-role{font-size:12px;color:var(--ink-l);}
+.gap-body{font-size:13px;color:var(--ink-l);line-height:1.6;}
+.gap-h{color:var(--blue);font-size:12px;}
+.gap-note{margin-top:8px;font-size:12px;background:var(--cream);border-radius:var(--r);padding:8px 10px;color:var(--ink-l);border:1px solid var(--border);}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.ac{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:16px 18px;}
+.at{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-f);margin-bottom:12px;}
+.ar{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #F0EDE8;font-size:12px;gap:8px;}
+.ar:last-child{border-bottom:none;}
+.al{color:var(--ink-l);flex:1;}
+.av{font-weight:600;color:var(--ink);white-space:nowrap;}
+.abar{width:60px;height:4px;background:#ECEAE6;border-radius:2px;overflow:hidden;flex-shrink:0;}
+.afill{height:100%;background:var(--green);border-radius:2px;}
+.alert{border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.6;margin-top:12px;border-left:3px solid;border-top-left-radius:0;border-bottom-left-radius:0;}
+.alert-a{background:var(--amber-l);color:#6B4200;border-color:var(--amber);}
+.alert-r{background:var(--red-l);color:#6B0000;border-color:var(--red);}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.cal-title{font-family:'DM Serif Display',serif;font-size:18px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-hdr{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-f);text-align:center;padding:4px 0;}
+.cal-day{min-height:58px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:5px 6px;font-size:11px;}
+.cal-day.today{border-color:var(--ink);border-width:2px;}
+.cal-day.other{opacity:.35;}
+.cal-num{font-size:10px;color:var(--ink-f);margin-bottom:3px;}
+.cal-dot{font-size:10px;padding:1px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-dot.gv{background:var(--blue-l);color:var(--blue);}
+.cal-dot.dac{background:var(--purple-l);color:var(--purple);}
+.news-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:14px 16px;margin-bottom:10px;}
+.news-hed{font-weight:600;font-size:13px;color:var(--ink);margin-bottom:4px;}
+.news-meta{font-size:11px;color:var(--ink-f);margin-bottom:8px;}
+.news-angle{font-size:12px;color:var(--ink-l);line-height:1.5;margin-bottom:10px;}
+.news-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.theme-pills{display:flex;flex-wrap:wrap;gap:5px;}
+.theme-pill{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--cream);border:1px solid var(--border);color:var(--ink-l);}
+.empty{text-align:center;padding:40px 20px;color:var(--ink-f);font-size:13px;}
+.empty strong{display:block;font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink-l);margin-bottom:6px;}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,24,20,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--rlg);padding:24px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--ink-l);margin-bottom:16px;line-height:1.6;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.canva-tmpl{border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;display:flex;justify-content:space-between;align-items:center;}
+.canva-tmpl:hover{border-color:var(--purple);}
+.canva-tmpl-name{font-weight:500;font-size:13px;color:var(--ink);}
+.canva-tmpl-desc{font-size:11px;color:var(--ink-l);margin-top:2px;}
+.copied-flash{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:10px 20px;border-radius:20px;z-index:1000;display:none;animation:fadeup .3s ease;}
+@keyframes fadeup{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@media(max-width:680px){.panel{padding:16px;}.c2,.c3{grid-template-columns:1fr;}.ag{grid-template-columns:1fr;}.hdr{padding:0 16px;}.nav{padding:0 12px;}}
+
+.setup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--ink);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.setup-box{background:var(--white);border-radius:var(--rlg);padding:32px;max-width:480px;width:100%;}
+.setup-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);margin-bottom:8px;}
+.setup-sub{font-size:13px;color:var(--ink-l);line-height:1.6;margin-bottom:20px;}
+.setup-steps{font-size:12px;color:var(--ink-l);line-height:1.9;margin-bottom:20px;background:var(--cream);border-radius:var(--r);padding:12px 14px;}
+.setup-steps a{color:var(--blue);}
+.setup-input-row{display:flex;gap:8px;}
+.setup-input-row input{flex:1;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;outline:none;}
+.setup-input-row input:focus{border-color:var(--ink);background:var(--white);}
+.setup-err{font-size:12px;color:var(--red);margin-top:8px;display:none;}
+.setup-skip{font-size:12px;color:var(--ink-f);cursor:pointer;text-align:center;margin-top:12px;text-decoration:underline;}
+.key-badge{font-size:11px;padding:3px 10px;border-radius:20px;cursor:pointer;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+.key-badge.ok{color:#6DCEA0;border-color:rgba(109,206,160,.3);}
+</style>
+</head>
+<body>
+
+<div class="copied-flash" id="copied-flash">Copied to clipboard — paste into LinkedIn</div>
+
+<div class="hdr">
+  <div style="display:flex;align-items:baseline;gap:8px;">
+    <span class="mark">DAC · GV</span>
+    <span style="color:rgba(255,255,255,.2)">|</span>
+    <span style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;">Social Hub</span>
+  </div>
+  <div class="hdr-r">
+    <span class="hdr-date" id="hdr-date"></span>
+    <span class="api-status key-badge" id="api-status" onclick="resetApiKey()" title="Click to change API key">AI ready</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" id="nb-compose" onclick="sw('compose')"><span class="dot" style="background:var(--green)"></span>Compose</button>
+  <button class="nav-btn" id="nb-briefs" onclick="sw('briefs')"><span class="dot" style="background:var(--teal)"></span>Today's Briefs</button>
+  <button class="nav-btn" id="nb-queue" onclick="sw('queue')"><span class="dot" style="background:var(--amber)"></span>Queue</button>
+  <button class="nav-btn" id="nb-calendar" onclick="sw('calendar')"><span class="dot" style="background:var(--blue)"></span>Calendar</button>
+  <button class="nav-btn" id="nb-targets" onclick="sw('targets')"><span class="dot" style="background:var(--purple)"></span>Targets</button>
+  <button class="nav-btn" id="nb-gaps" onclick="sw('gaps')"><span class="dot" style="background:var(--red)"></span>Gaps</button>
+  <button class="nav-btn" id="nb-analytics" onclick="sw('analytics')"><span class="dot" style="background:var(--ink-f)"></span>Analytics</button>
+</nav>
+
+<!-- ═══ COMPOSE ═══ -->
+<div class="panel active" id="panel-compose">
+  <div class="card">
+    <div class="form-row c3">
+      <div><label>Account</label>
+        <select id="c-acct">
+          <option value="GV">GV — George Vradenburg</option>
+          <option value="DAC">DAC — Davos Alzheimer's Collaborative</option>
+        </select>
+      </div>
+      <div><label>Post type</label>
+        <select id="c-type"><option>Post</option><option>Repost</option><option>Engagement</option></select>
+      </div>
+      <div><label>Scheduled date</label><input type="date" id="c-date"></div>
+    </div>
+    <div class="form-row c2">
+      <div><label>Topic / content pillar</label>
+        <select id="c-topic" onchange="suggestTags()">
+          <option value="">Select a topic...</option>
+          <option value="brain-economy">Brain economy / brain capital</option>
+          <option value="prevention">Prevention / early detection</option>
+          <option value="womens-health">Women's brain health</option>
+          <option value="ai-cognition">AI + cognition / human capital</option>
+          <option value="alzheimers-research">Alzheimer's research / science</option>
+          <option value="global-south">Global South / LMIC / equity</option>
+          <option value="g7-g20">G7 / G20 / policy</option>
+          <option value="pension-fiscal">Pension funds / fiscal sustainability</option>
+          <option value="fundraising">Fundraising / funder engagement</option>
+          <option value="conference">Conference / event</option>
+        </select>
+      </div>
+      <div><label>Monthly theme</label>
+        <select id="c-theme">
+          <option>May — Milken / WHA preview and pension liabilities</option>
+          <option>June — G7 prep and Operation Warp Speed</option>
+          <option>July — AAIC and research credibility</option>
+          <option>August — UN SDGs and global equity / LMIC</option>
+          <option>September — UN SDGs and global equity / LMIC</option>
+          <option>October — Brain Capital Index</option>
+          <option>November — Year-end fundraising</option>
+          <option>December — G20 recap and 2027 roadmap</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row c1">
+      <div><label>Source article URL (paste to generate post)</label>
+        <input type="text" id="c-url" placeholder="Paste a news article or report URL — AI will draft a post from it...">
+      </div>
+    </div>
+    <div class="form-row c1">
+      <div><label>Post copy</label>
+        <textarea id="c-copy" placeholder="Write copy here, or paste a URL above and click Generate below."></textarea>
+      </div>
+    </div>
+
+    <!-- VOICE BUTTONS -->
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-f);margin-bottom:8px;">AI voice generator</div>
+      <div class="voice-row">
+        <button class="btn btn-p btn-sm" onclick="generateVoice('GV')">
+          <span id="gv-spin" style="display:none" class="spinner"></span>
+          ✦ Generate in GV's voice
+        </button>
+        <button class="btn btn-b btn-sm" onclick="generateVoice('DAC')">
+          <span id="dac-spin" style="display:none" class="spinner"></span>
+          ✦ Generate in DAC's voice
+        </button>
+        <button class="btn btn-sm" onclick="rewritePost()">
+          <span id="rw-spin" style="display:none" class="spinner spinner-dark"></span>
+          ↺ Rewrite &amp; improve
+        </button>
+      </div>
+    </div>
+
+    <!-- AI RESULT BOX -->
+    <div class="ai-box" id="ai-result-box">
+      <div class="ai-box-title" id="ai-box-label">Generated post</div>
+      <div class="ai-result" id="ai-result-text"></div>
+      <div class="ai-actions">
+        <button class="btn btn-g btn-sm" onclick="useAiResult()">↑ Use this copy</button>
+        <button class="btn btn-sm" onclick="document.getElementById('ai-result-box').style.display='none'">Dismiss</button>
+      </div>
+    </div>
+
+    <div class="form-row c1" id="tag-box" style="display:none">
+      <div class="chip-area">
+        <div class="chip-lbl">Suggested tags &amp; mentions — click to select</div>
+        <div class="chips" id="tag-chips"></div>
+      </div>
+    </div>
+
+    <div class="form-row c2">
+      <div><label>Tags &amp; mentions</label>
+        <input type="text" id="c-tags" placeholder="Auto-filled from suggestions, or type manually...">
+      </div>
+      <div><label>Drafted by</label>
+        <select id="c-author">
+          <option>Lindsay Einstein</option>
+          <option>Daphne Wong</option>
+          <option>Charis Liu</option>
+          <option>Mary Davis</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row c2">
+      <div><label>Status</label>
+        <select id="c-status"><option value="draft">Draft — needs review</option><option value="approved">Approved — ready to post</option></select>
+      </div>
+      <div><label>Canva graphic</label>
+        <button class="btn btn-canva btn-sm" onclick="openCanvaModal()" style="margin-top:0;width:100%;justify-content:center;">
+          🎨 Create infographic template
+        </button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <span class="toast" id="toast"></span>
+      <button class="btn" onclick="clearCompose()">Clear</button>
+      <button class="btn btn-p" onclick="savePost()">Save to queue →</button>
+    </div>
+  </div>
+
+  <div class="sh">Monthly themes — quick reference</div>
+  <div class="card"><div class="theme-pills" id="theme-pills"></div></div>
+</div>
+
+<!-- ═══ TODAY'S BRIEFS ═══ -->
+<div class="panel" id="panel-briefs">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);">Today's Briefs</div>
+      <div style="font-size:13px;color:var(--ink-l);margin-top:2px;">AI-scanned news → post angles in GV &amp; DAC voice</div>
+    </div>
+    <button class="btn btn-t" onclick="fetchBriefs()" id="briefs-btn">
+      <span id="briefs-spin" style="display:none" class="spinner"></span>
+      ↺ Scan latest news
+    </button>
+  </div>
+  <div id="briefs-list">
+    <div class="empty"><strong>No briefs yet</strong>Click "Scan latest news" to pull today's top brain health, brain economy, and Alzheimer's stories — the AI will suggest a post angle for each one in GV and DAC voice.</div>
+  </div>
+</div>
+
+<!-- ═══ QUEUE ═══ -->
+<div class="panel" id="panel-queue">
+  <div id="notion-banner" style="border-radius:var(--rlg);padding:16px 20px;margin-bottom:16px;background:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div>
+      <div style="font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:3px;" id="notion-banner-title">Connect Notion for shared queue</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);" id="notion-banner-sub">Until connected, posts save to your browser only. Click Setup to share with the whole team.</div>
+    </div>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)" onclick="toggleNotionSetup()">Setup</button>
+  </div>
+  <div id="notion-setup-form" style="display:none;background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);padding:18px 20px;margin-bottom:16px;">
+    <div class="form-row c2">
+      <div><label>Notion Integration Token</label><input type="password" id="notion-token" placeholder="secret_..."></div>
+      <div><label>Database ID</label><input type="text" id="notion-db-id" placeholder="3674a8103166801ba7d0ef5b93ec76a8"></div>
+    </div>
+    <div style="font-size:12px;color:var(--ink-l);background:var(--cream);border-radius:var(--r);padding:10px 12px;margin-bottom:10px;line-height:1.8;">
+      <strong>Token:</strong> Go to notion.com/profile/integrations → New integration → copy the secret_ token, then open your DAC Post Queue in Notion → ··· → Connections → add your integration.<br>
+      <strong>Database ID:</strong> <code style="background:#eee;padding:1px 4px;border-radius:3px;">3674a8103166801ba7d0ef5b93ec76a8</code>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-p btn-sm" onclick="saveNotionCreds()">Save &amp; connect</button>
+      <button class="btn btn-sm" onclick="toggleNotionSetup()">Cancel</button>
+      <span id="notion-conn-msg" style="font-size:12px;display:none;"></span>
+    </div>
+  </div>
+  <div class="queue-bar">
+    <div class="fpills">
+      <span class="fpill on" onclick="fq('all',this)">All</span>
+      <span class="fpill" onclick="fq('GV',this)">GV</span>
+      <span class="fpill" onclick="fq('DAC',this)">DAC</span>
+      <span class="fpill" onclick="fq('draft',this)">Drafts</span>
+      <span class="fpill" onclick="fq('approved',this)">Approved</span>
+      <span class="fpill" onclick="fq('posted',this)">Posted</span>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-sm" onclick="loadQueue()">&#x21BA; Refresh</button>
+      <button class="btn btn-p btn-sm" onclick="sw('compose')">+ New post</button>
+    </div>
+  </div>
+  <div id="queue-list"></div>
+</div>
+
+<!-- ═══ CALENDAR ═══ -->
+<div class="panel" id="panel-calendar">
+  <div class="cal-nav">
+    <button class="btn btn-sm" onclick="calPrev()">← Prev</button>
+    <span class="cal-title" id="cal-title"></span>
+    <button class="btn btn-sm" onclick="calNext()">Next →</button>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div style="display:flex;gap:10px;margin-top:12px;">
+    <span class="badge b-b">GV post</span>
+    <span class="badge b-p">DAC post</span>
+  </div>
+</div>
+
+<!-- ═══ TARGETS ═══ -->
+<div class="panel" id="panel-targets">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val">29</div><div class="stat-lbl">Total targets</div></div>
+    <div class="stat-card"><div class="stat-val">14</div><div class="stat-lbl">Handles confirmed</div></div>
+    <div class="stat-card"><div class="stat-val">8</div><div class="stat-lbl">Need verification</div></div>
+    <div class="stat-card"><div class="stat-val">2</div><div class="stat-lbl">Connect today</div></div>
+  </div>
+  <div class="sbar">
+    <input type="text" id="tq" placeholder="Search name, org, topic..." oninput="filterTgts()">
+    <select id="tf" onchange="filterTgts()"><option value="">All cadence</option><option value="Urgent">Urgent</option><option value="Weekly">Weekly</option><option value="Bi-monthly">Bi-monthly</option><option value="Selective">Selective</option></select>
+    <select id="ts" onchange="filterTgts()"><option value="">All status</option><option value="connected">Connected</option><option value="verified">Verified</option><option value="gap">Needs lookup</option></select>
+  </div>
+  <div class="card tbl-wrap">
+    <table><thead><tr>
+      <th style="width:22%">Name</th><th style="width:24%">LinkedIn handle</th><th style="width:8%">Reach</th>
+      <th style="width:10%">Cadence</th><th style="width:10%">Status</th><th style="width:26%">Engage on</th>
+    </tr></thead><tbody id="tgt-body"></tbody></table>
+  </div>
+</div>
+
+<!-- ═══ GAPS ═══ -->
+<div class="panel" id="panel-gaps">
+  <div class="sh">Connect immediately — met with Fundación Pasqual Maragall yesterday</div>
+  <div class="gap-card urg">
+    <div class="gap-top">
+      <div><div class="gap-title">Glòria Oliver Rodríguez</div><div class="gap-role">Deputy General Director, Fundación Pasqual Maragall &amp; BBRC</div></div>
+      <span class="badge b-r">Connect today</span>
+    </div>
+    <div class="gap-body">Handle: <span class="gap-h">linkedin.com/in/glòriaoliver</span><br><br>Your primary relationship at the Foundation — has been there since founding in 2008, owns operations and fundraising. Also President of the Spanish Fundraising Association and Secretary of Catalonia's R&amp;D Patronage Council.</div>
+    <div class="gap-note"><strong>Also connect:</strong> Dr. Arcadi Navarro (Director) · <span class="gap-h">linkedin.com/in/arcadi-navarro-cuartiellas</span> · Foundation page: <span class="gap-h">linkedin.com/company/pasqual-maragall-foundation</span> · Gemma Salvadó Blasco (researcher — warm intro to Oskar Hansson at Lund)</div>
+  </div>
+  <div class="sh">High-value research org gaps</div>
+  <div class="gap-card">
+    <div class="gap-top"><div><div class="gap-title">Alzheimer's Association</div><div class="gap-role">145K followers</div></div><span class="badge b-a">Add to targets</span></div>
+    <div class="gap-body">Handle: <span class="gap-h">linkedin.com/company/alzheimers-association</span> · Maria Carrillo (CSO): <span class="gap-h">linkedin.com/in/maria-carrillo-baaa112</span> · AAIC in London July — begin engaging now.</div>
+  </div>
+  <div class="gap-card">
+    <div class="gap-top"><div><div class="gap-title">Alzheimer's Research UK</div><div class="gap-role">30K followers</div></div><span class="badge b-a">July priority</span></div>
+    <div class="gap-body">Handle: <span class="gap-h">linkedin.com/company/alzheimers-research-uk</span> · AAIC is on their home turf in London.</div>
+  </div>
+  <div class="gap-card">
+    <div class="gap-top"><div><div class="gap-title">Oskar Hansson, MD PhD</div><div class="gap-role">Lund University — world leader in Alzheimer's blood biomarkers</div></div><span class="badge b-g">Warm intro available</span></div>
+    <div class="gap-body">Gemma Salvadó Blasco from Pasqual Maragall just completed her PhD under his supervision — ask Glòria Oliver for the introduction.</div>
+  </div>
+  <div class="gap-card">
+    <div class="gap-top"><div><div class="gap-title">GBHI (Global Brain Health Institute)</div><div class="gap-role">Current DAC partner per funder tracker</div></div><span class="badge b-a">Partner not yet a LinkedIn target</span></div>
+    <div class="gap-body">Search: <span class="gap-h">linkedin.com/company/global-brain-health-institute</span> · Tag regularly — their fellows network amplifies globally.</div>
+  </div>
+  <div class="sh">Organic engagers — warm leads not yet tracked</div>
+  <div class="gap-card new">
+    <div class="gap-top"><div><div class="gap-title">Manoj Gursahani</div><div class="gap-role">Tiger 21</div></div><span class="badge b-g">Commented on Fortune op-ed</span></div>
+    <div class="gap-body">Came to GV organically. Tiger 21 = exactly the funding audience DAC is targeting. Connect and add to Funders tracker.</div>
+  </div>
+  <div class="gap-card new">
+    <div class="gap-top"><div><div class="gap-title">Jacqueline Hunter</div><div class="gap-role">Director of Development, Cleveland Clinic</div></div><span class="badge b-g">Engaged April post</span></div>
+    <div class="gap-body">Philanthropic decision-maker at a major health institution. Engaged on the April OpenAI/brain capital post. Connect and add to Funders tracker.</div>
+  </div>
+</div>
+
+<!-- ═══ ANALYTICS ═══ -->
+<div class="panel" id="panel-analytics">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val">3,007</div><div class="stat-lbl">GV followers</div></div>
+    <div class="stat-card"><div class="stat-val">+17%</div><div class="stat-lbl">GV follower growth</div></div>
+    <div class="stat-card"><div class="stat-val">2.82%</div><div class="stat-lbl">Avg. engagement rate</div></div>
+    <div class="stat-card"><div class="stat-val">7,803</div><div class="stat-lbl">DAC followers</div></div>
+    <div class="stat-card"><div class="stat-val">25,520</div><div class="stat-lbl">Harris Eyre benchmark</div></div>
+  </div>
+  <div class="ag">
+    <div class="ac">
+      <div class="at">Top posts by impressions — Mar/Apr 2026</div>
+      <div class="ar"><span class="al">TIME op-ed (Women's Brain Health)</span><span class="av">8,090</span><div class="abar"><div class="afill" style="width:100%"></div></div></div>
+      <div class="ar"><span class="al">Fortune op-ed (Brain Health)</span><span class="av">6,513</span><div class="abar"><div class="afill" style="width:80%"></div></div></div>
+      <div class="ar"><span class="al">PAHO Partnership</span><span class="av">3,966</span><div class="abar"><div class="afill" style="width:49%"></div></div></div>
+      <div class="ar"><span class="al">WaPo Prevention (diet)</span><span class="av">2,812</span><div class="abar"><div class="afill" style="width:35%"></div></div></div>
+      <div class="ar"><span class="al">Bloomberg Prevention</span><span class="av">2,953</span><div class="abar"><div class="afill" style="width:36%"></div></div></div>
+    </div>
+    <div class="ac">
+      <div class="at">Top posts by engagement rate</div>
+      <div class="ar"><span class="al">Devex feature on GV</span><span class="av">5.00%</span><div class="abar"><div class="afill" style="width:100%"></div></div></div>
+      <div class="ar"><span class="al">Fortune repost (Erica Coe)</span><span class="av">3.53%</span><div class="abar"><div class="afill" style="width:71%"></div></div></div>
+      <div class="ar"><span class="al">WaPo Prevention (diet)</span><span class="av">3.38%</span><div class="abar"><div class="afill" style="width:68%"></div></div></div>
+      <div class="ar"><span class="al">TIME walking article</span><span class="av">3.38%</span><div class="abar"><div class="afill" style="width:68%"></div></div></div>
+      <div class="ar"><span class="al">Bloomberg Prevention</span><span class="av">3.15%</span><div class="abar"><div class="afill" style="width:63%"></div></div></div>
+    </div>
+  </div>
+  <div class="alert alert-r"><strong>April margin dip:</strong> Firm-wide margin dropped from 44% in March to 25% in April — investigate over-staffing, cost-only projects, or unrecognized revenue timing.</div>
+  <div class="alert alert-a"><strong>Benchmark gap:</strong> GV is at 3,007 followers vs. Harris Eyre at 25,520. Fastest path: op-ed-driven posts and strategic reposts from high-follower accounts like Christine Lagarde and Erica Coe.</div>
+</div>
+
+<!-- ═══ CANVA MODAL ═══ -->
+<div class="modal-overlay" id="canva-modal">
+  <div class="modal">
+    <div class="modal-title">🎨 Canva Infographic Templates</div>
+    <div class="modal-sub">Choose a template type. Each opens a pre-configured Canva template sized and branded for DAC/GV LinkedIn posts (1080×1080 or 1200×627). Build your templates once in Canva and paste the template URLs below to make them permanent.</div>
+    <div id="canva-templates">
+      <div class="canva-tmpl" onclick="openCanva('stat')">
+        <div><div class="canva-tmpl-name">📊 Stat callout</div><div class="canva-tmpl-desc">Single striking statistic — e.g. "$6.2 trillion in brain capital opportunity"</div></div>
+        <span class="badge b-p">Open →</span>
+      </div>
+      <div class="canva-tmpl" onclick="openCanva('quote')">
+        <div><div class="canva-tmpl-name">💬 GV quote card</div><div class="canva-tmpl-desc">Pull quote from George's post or op-ed, branded GV style</div></div>
+        <span class="badge b-p">Open →</span>
+      </div>
+      <div class="canva-tmpl" onclick="openCanva('framework')">
+        <div><div class="canva-tmpl-name">🧠 Brain capital framework</div><div class="canva-tmpl-desc">Visual explanation of the brain economy model — reusable diagram</div></div>
+        <span class="badge b-p">Open →</span>
+      </div>
+      <div class="canva-tmpl" onclick="openCanva('event')">
+        <div><div class="canva-tmpl-name">📅 Event / conference promo</div><div class="canva-tmpl-desc">Announce GV's participation at AAIC, Milken, WHA, G7 etc.</div></div>
+        <span class="badge b-p">Open →</span>
+      </div>
+      <div class="canva-tmpl" onclick="openCanva('dac')">
+        <div><div class="canva-tmpl-name">🌐 DAC org announcement</div><div class="canva-tmpl-desc">New partnerships, research milestones, coalition updates</div></div>
+        <span class="badge b-p">Open →</span>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:var(--ink-l);background:var(--cream);border-radius:var(--r);padding:10px 12px;border:1px solid var(--border);">
+      <strong>To link your actual Canva templates:</strong> In Canva, open a template → Share → Copy link → paste it into the code where it says <code>CANVA_TEMPLATE_URL</code>. Your team will then click straight into the live template.
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeCanvaModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var TAG_MAP={
+  'brain-economy':['Harris Eyre','Rym Ayadi','BCG Henderson Institute','Borge Brende (WEF)','Kristalina Georgieva (IMF)','Christine Lagarde','McKinsey Health Institute','#BrainEconomy','#BrainCapital'],
+  'prevention':['Fundacion Pasqual Maragall','Gloria Oliver (BBRC)','Oskar Hansson','Reisa Sperling','Alzheimer\'s Association','Lisa Mosconi PhD','GBHI','#Prevention','#BrainHealth','#AlzheimersResearch'],
+  'womens-health':['Lisa Mosconi PhD','WE LEAD Lounge','Wellcome Leap','#WomensBrainHealth','#BrainHealth','#AlzheimersDisease'],
+  'ai-cognition':['Wojciech Zaremba (OpenAI)','Jacob Trefethen (OpenAI)','BCG Henderson Institute','Vivienne Ming','Harris Eyre','#BrainCapital','#AI','#HumanCapital'],
+  'alzheimers-research':['Alzheimer\'s Association','Maria Carrillo (AA)','Alzheimer\'s Research UK','Fundacion Pasqual Maragall','GBHI','Oskar Hansson','#AlzheimersResearch','#Dementia','#BrainHealth'],
+  'global-south':['PAHO','Rym Ayadi (EMEA)','Harris Eyre','Alzheimer Europe','#GlobalHealth','#BrainHealth','#LMIC'],
+  'g7-g20':['Borge Brende (WEF)','Christine Lagarde','Kristalina Georgieva','World Dementia Council','Harris Eyre','#G7','#BrainEconomy','#BrainCapital'],
+  'pension-fiscal':['Ray Dalio','Christine Lagarde','Kristalina Georgieva','BCG Henderson Institute','Harris Eyre','#BrainCapital','#FiscalPolicy','#BrainEconomy'],
+  'fundraising':['Manoj Gursahani (Tiger 21)','Jacqueline Hunter (Cleveland Clinic)','Wellcome Leap','GBHI','#BrainHealth','#AlzheimersResearch'],
+  'conference':['Alzheimer\'s Association','Maria Carrillo (AA)','Alzheimer\'s Research UK','Harris Eyre','Fundacion Pasqual Maragall','#AAIC2026','#BrainHealth','#Alzheimer']
+};
+var CANVA_URLS={
+  'stat':'https://www.canva.com/design/CANVA_TEMPLATE_URL_STAT/edit',
+  'quote':'https://www.canva.com/design/CANVA_TEMPLATE_URL_QUOTE/edit',
+  'framework':'https://www.canva.com/design/CANVA_TEMPLATE_URL_FRAMEWORK/edit',
+  'event':'https://www.canva.com/design/CANVA_TEMPLATE_URL_EVENT/edit',
+  'dac':'https://www.canva.com/design/CANVA_TEMPLATE_URL_DAC/edit'
+};
+var GV_VOICE='You are writing a LinkedIn post for George Vradenburg, co-founder of the Davos Alzheimer\'s Collaborative and a leading voice on the brain economy. His voice is: authoritative but accessible, data-forward (he cites specific numbers and research), optimistic with urgency, always bridges science to economic and policy stakes, uses short punchy opening lines, ends with a clear implication or call to action, uses bullet points sparingly and only for key takeaways, never uses jargon without explaining it. Tone: senior statesman meets policy entrepreneur. Avoid corporate-speak. Posts are 150-250 words. Always end with 1-2 relevant hashtags like #BrainHealth #BrainEconomy #BrainCapital.';
+var DAC_VOICE='You are writing a LinkedIn post for the Davos Alzheimer\'s Collaborative (DAC), an international organization accelerating Alzheimer\'s prevention, diagnosis, and care globally. DAC\'s voice is: institutional but warm, mission-driven, coalition-minded (celebrates partners and collaborators), cites research and economic data, speaks to policymakers, funders, and researchers, uses "we" to reflect the collaborative nature. Tone: credible global health organization with urgency and hope. Posts are 120-200 words. Always end with 2-3 relevant hashtags like #AlzheimersResearch #BrainHealth #DAC.';
+var TARGETS=[
+  {n:'Gloria Oliver Rodriguez',r:'Deputy General Director, Pasqual Maragall',h:'linkedin.com/in/gloriaoliver',f:'~1K',freq:'Urgent',s:'verified',w:'Met yesterday. Operations + fundraising lead. President, Spanish Fundraising Association.'},
+  {n:'Dr. Arcadi Navarro',r:'Director, Pasqual Maragall / BBRC',h:'linkedin.com/in/arcadi-navarro-cuartiellas',f:'~3K',freq:'Urgent',s:'verified',w:'Connect today. Prevention science leader. Warm intro to Oskar Hansson.'},
+  {n:'Ray Dalio',r:'Founder, Bridgewater Associates',h:'linkedin.com/in/raydalio',f:'2M+',freq:'Weekly',s:'verified',w:'Economic policy + brain capital as fiscal risk.'},
+  {n:'Christine Lagarde',r:'President, European Central Bank',h:'linkedin.com/in/christinelagarde',f:'2.6M',freq:'Weekly',s:'verified',w:'Fiscal sustainability, gender equity, European policy.'},
+  {n:'Kristalina Georgieva',r:'Managing Director, IMF',h:'linkedin.com/in/kristalina-georgieva',f:'185K',freq:'Weekly',s:'connected',w:'SDGs, fiscal sustainability. GV engaged March.'},
+  {n:'Borge Brende',r:'President & CEO, WEF',h:'linkedin.com/in/borge-brende',f:'~80K',freq:'Weekly',s:'verified',w:'WEF Brain Economy Action Forum. G7/Davos content.'},
+  {n:'Harris Eyre MD PhD',r:'Executive Director, GBEI',h:'linkedin.com/in/harris-eyre-66207958',f:'25.5K',freq:'Weekly',s:'connected',w:'Brain economy benchmark. All brain capital content.'},
+  {n:'BCG Henderson Institute',r:'Think tank, BCG',h:'linkedin.com/company/bcg-henderson-institute',f:'200K+',freq:'Weekly',s:'connected',w:'Brain capital + AI productivity.'},
+  {n:'Lisa Mosconi PhD',r:"Women's Brain Initiative, Weill Cornell",h:'linkedin.com/in/lisa-mosconi',f:'~50K',freq:'Weekly',s:'verified',w:"Co-authored TIME op-ed with GV. Women's brain health."},
+  {n:'Erica Hutchins Coe',r:'Global Director, McKinsey Health Institute',h:'linkedin.com/in/ericahutchins',f:'~40K',freq:'Bi-monthly',s:'connected',w:'MHI brain health economics. Active collaborator.'},
+  {n:'Rym Ayadi',r:'Founder, EMEA; Brain Capital Alliance',h:'linkedin.com/in/rym-ayadi-68b39b8',f:'~15K',freq:'Bi-monthly',s:'verified',w:'EU brain capital policy. Active at WHA May 2026.'},
+  {n:"Alzheimer's Association",r:"Largest global Alzheimer's org",h:"linkedin.com/company/alzheimers-association",f:'145K',freq:'Bi-monthly',s:'verified',w:'AAIC July London. Begin engaging now.'},
+  {n:'Maria Carrillo PhD',r:"CSO, Alzheimer's Association",h:'linkedin.com/in/maria-carrillo-baaa112',f:'~5K',freq:'Bi-monthly',s:'verified',w:'AAIC lead. Tag in July AAIC preview posts.'},
+  {n:"Alzheimer's Research UK",r:"UK's leading Alzheimer's charity",h:"linkedin.com/company/alzheimers-research-uk",f:'30K',freq:'Bi-monthly',s:'verified',w:'AAIC in London. UK amplification.'},
+  {n:'Fundacion Pasqual Maragall',r:'Barcelona prevention research org',h:'linkedin.com/company/pasqual-maragall-foundation',f:'~5K',freq:'Bi-monthly',s:'verified',w:'Just met. Tag in all prevention posts.'},
+  {n:'Wojciech Zaremba',r:'OpenAI Foundation  -  AI Resilience',h:'Needs verification',f:'Unknown',freq:'Weekly',s:'gap',w:'GV tagged April. AI + cognition.'},
+  {n:'Jacob Trefethen',r:'OpenAI Foundation  -  Life Sciences',h:'Needs verification',f:'Unknown',freq:'Weekly',s:'gap',w:'Health philanthropy + AI for brain health.'},
+  {n:'Anna Makanju',r:'OpenAI Foundation  -  Civil Society',h:'Needs verification',f:'Unknown',freq:'Weekly',s:'gap',w:'AI for social good.'},
+  {n:'Lucy Perez',r:'McKinsey Health Institute',h:'Needs verification',f:'Unknown',freq:'Bi-monthly',s:'gap',w:"MHI brain health and women's health."},
+  {n:'Tides Foundation',r:'Social justice philanthropy',h:'linkedin.com/company/tides-foundation',f:'~15K',freq:'Weekly',s:'verified',w:'Social determinants of health, equity content.'},
+  {n:'WE LEAD Lounge',r:"Women's leadership organization",h:'Search LinkedIn company page',f:'Unknown',freq:'Weekly',s:'gap',w:"Women's empowerment. Weekly target."},
+  {n:'Vivienne Ming',r:'Neuroscientist / AI researcher, Socos Labs',h:'linkedin.com/in/vivienne-ming',f:'~30K',freq:'Selective',s:'verified',w:'AI + brain health bridge.'},
+  {n:'Oskar Hansson MD PhD',r:'Lund University  -  biomarkers',h:'Search: oskar-hansson lund',f:'~8K',freq:'Selective',s:'gap',w:'Warm intro via Pasqual Maragall.'},
+  {n:'Reisa Sperling MD',r:"Harvard / Brigham & Women's",h:'Search: reisa-sperling harvard',f:'~10K',freq:'Selective',s:'gap',w:'Pioneer, preclinical Alzheimer\'s trials. AAIC July.'},
+  {n:'Jason Karlawish MD',r:'Penn Memory Center',h:'Search: jason-karlawish penn',f:'~8K',freq:'Selective',s:'gap',w:'In Pitches tracker (Age of Aging podcast).'},
+  {n:'Sam Gandy MD',r:'Neurologist, Mount Sinai',h:'Search: sam-gandy mount-sinai',f:'~10K',freq:'Selective',s:'gap',w:'Reposted GV March veteran post organically.'},
+  {n:'GBHI',r:'Global Brain Health Institute  -  current DAC partner',h:'Search: global-brain-health-institute',f:'~4K',freq:'Bi-monthly',s:'gap',w:'Current DAC partner. Should be tagged regularly.'},
+  {n:'Manoj Gursahani',r:'Tiger 21  -  high-net-worth network',h:'Search LinkedIn',f:'Unknown',freq:'Selective',s:'gap',w:'Commented on Fortune op-ed. Warm funder lead.'},
+  {n:'Jacqueline Hunter',r:'Dir. of Development, Cleveland Clinic',h:'Search LinkedIn',f:'Unknown',freq:'Selective',s:'gap',w:'Engaged April post. Philanthropic decision-maker.'}
+];
+var posts=[
+  {id:1,acct:'GV',type:'Post',topic:'ai-cognition',copy:"Don't take the (cognitive) shortcut.\n\nIn a world where technology constantly invites us to reduce cognitive friction, we must invest in brain capital with the same urgency we invest in physical and digital infrastructure.",tags:'Wojciech Zaremba (OpenAI)     Jacob Trefethen (OpenAI)     Vivienne Ming     #BrainHealth #BrainCapital',attach:'BBC Article',date:'2026-05-22',status:'approved',theme:'May',author:'Lindsay Einstein'},
+  {id:2,acct:'GV',type:'Post',topic:'pension-fiscal',copy:'Draft: Milken/pension fund liabilities framing. Position GV as bridge between health science and financial risk.',tags:'Ray Dalio     Christine Lagarde     #BrainEconomy #FiscalPolicy',attach:'',date:'2026-05-28',status:'draft',theme:'May',author:'Mary Davis'},
+  {id:3,acct:'DAC',type:'Post',topic:'prevention',copy:"Draft: Welcome Fundacion Pasqual Maragall and the BBRC to our growing network of prevention-focused partners. Their ALFA cohort represents the gold standard in early detection science.",tags:'Fundacion Pasqual Maragall     Gloria Oliver     Dr. Arcadi Navarro     Harris Eyre     #AlzheimersResearch #Prevention',attach:'',date:'2026-05-23',status:'draft',theme:'May',author:'Daphne Wong'}
+];
+var nextId=4,calYear=2026,calMonth=4,qFilter='all';
+var lastAiText='';
+
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+document.getElementById('theme-pills').innerHTML=['May  -  Milken / WHA preview, pension liabilities','June  -  G7 prep, Operation Warp Speed comparisons','July  -  AAIC, research credibility','August  -  UN SDGs, global equity, LMIC','September  -  UN SDGs, global equity, LMIC','October  -  Brain Capital Index','November  -  Year-end fundraising','December  -  G20 recap, 2027 roadmap'].map(function(t){return '<span class="theme-pill">'+t+'</span>';}).join('');
+
+function sw(name){
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('nb-'+name).classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='queue'){checkNotionBanner();loadQueue();}
+  if(name==='calendar')renderCal();
+  if(name==='targets')renderTargets(TARGETS);
+}
+
+//    VOICE GENERATION   
+function callClaude(systemPrompt, userPrompt, onResult, spinId, extraBody) {
+  var k=getApiKey();
+  if(!k){
+    document.getElementById('setup-overlay').style.display='flex';
+    onResult('');
+    return;
+  }
+  var spin=document.getElementById(spinId);
+  if(spin)spin.style.display='inline-block';
+  document.getElementById('api-status').textContent='Generating...';
+  document.getElementById('api-status').className='api-status';
+  var body={model:'claude-sonnet-4-6',max_tokens:1000,system:systemPrompt,messages:[{role:'user',content:userPrompt}]};
+  if(extraBody){for(var k2 in extraBody){body[k2]=extraBody[k2];}}
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify(body)
+  }).then(function(r){return r.json();}).then(function(data){
+    if(spin)spin.style.display='none';
+    if(data.error){
+      document.getElementById('api-status').textContent='Key error';
+      document.getElementById('api-status').className='api-status';
+      if(data.error.type==='authentication_error'){
+        onResult('');
+        document.getElementById('api-key-input').value='';
+        document.getElementById('setup-err').style.display='block';
+        document.getElementById('setup-err').textContent='API key rejected  -  please check it and try again.';
+        document.getElementById('setup-overlay').style.display='flex';
+      } else {
+        onResult('API error: '+data.error.message);
+      }
+      return;
+    }
+    document.getElementById('api-status').textContent='AI ready';
+    document.getElementById('api-status').className='api-status ok';
+    var text='';
+    if(data.content&&data.content.length){for(var i=0;i<data.content.length;i++){if(data.content[i].type==='text')text+=data.content[i].text;}}
+    onResult(text||'No response generated. Please try again.');
+  }).catch(function(e){
+    if(spin)spin.style.display='none';
+    document.getElementById('api-status').textContent='Connection error';
+    document.getElementById('api-status').className='api-status';
+    onResult('Connection error. Check your internet and try again.');
+  });
+}
+
+function generateVoice(acct) {
+  var url=document.getElementById('c-url').value.trim();
+  var copy=document.getElementById('c-copy').value.trim();
+  var topic=document.getElementById('c-topic').value;
+  var theme=document.getElementById('c-theme').value;
+  if(!url&&!copy){showToast('Paste an article URL or write some copy first.','var(--red)');return;}
+  var sysPrompt=acct==='GV'?GV_VOICE:DAC_VOICE;
+  var userMsg='Write a LinkedIn post';
+  if(url&&!copy)userMsg+=' based on this article URL: '+url+'. First search for and read the article at this URL to understand its content and key findings.';
+  if(url&&copy)userMsg+=' The source article is at: '+url+'. Use this context: '+copy;
+  if(!url&&copy)userMsg+=' Rewrite this in the correct voice: '+copy;
+  if(topic)userMsg+='. Topic pillar: '+topic.replace(/-/g,' ');
+  if(theme)userMsg+='. Monthly theme context: '+theme;
+  var spinId=acct==='GV'?'gv-spin':'dac-spin';
+  document.getElementById('ai-box-label').textContent='Generated in '+(acct==='GV'?'George\'s voice':'DAC\'s voice');
+  document.getElementById('ai-result-box').style.display='none';
+  callClaude(sysPrompt,userMsg,function(text){
+    lastAiText=text;
+    document.getElementById('ai-result-text').textContent=text;
+    document.getElementById('ai-result-box').style.display='block';
+  },spinId);
+}
+
+function rewritePost(){
+  var copy=document.getElementById('c-copy').value.trim();
+  if(!copy){showToast('Write some copy first.','var(--red)');return;}
+  var acct=document.getElementById('c-acct').value;
+  var sysPrompt=acct==='GV'?GV_VOICE:DAC_VOICE;
+  document.getElementById('ai-box-label').textContent='Rewritten & improved';
+  document.getElementById('ai-result-box').style.display='none';
+  callClaude(sysPrompt,'Improve and polish this LinkedIn post draft. Keep the core message but sharpen the opening line, tighten the language, and ensure it matches the voice guidelines:\n\n'+copy,function(text){
+    lastAiText=text;
+    document.getElementById('ai-result-text').textContent=text;
+    document.getElementById('ai-result-box').style.display='block';
+  },'rw-spin');
+}
+
+function useAiResult(){
+  document.getElementById('c-copy').value=lastAiText;
+  document.getElementById('ai-result-box').style.display='none';
+  suggestTags();
+}
+
+//    TODAY'S BRIEFS   
+function fetchBriefs(){
+  var k=getApiKey();
+  if(!k){document.getElementById('setup-overlay').style.display='flex';return;}
+  var btn=document.getElementById('briefs-btn');
+  var spin=document.getElementById('briefs-spin');
+  btn.disabled=true;spin.style.display='inline-block';
+  document.getElementById('briefs-list').innerHTML='<div class="empty">Generating post angles from current brain health themes...</div>';
+  var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var sysPrompt='You are a social media strategist for George Vradenburg and the Davos Alzheimer Collaborative. Generate 5 timely LinkedIn post angles based on current brain health, brain economy, and Alzheimer research trends. Each should feel like a real news hook. Respond ONLY with valid JSON - no markdown, no extra text, just the raw JSON: {"briefs":[{"headline":"...","source":"...","date":"...","angle":"...","voice":"GV","topic":"brain-economy"}]}. voice must be GV or DAC. topic must be one of: brain-economy, prevention, womens-health, ai-cognition, alzheimers-research, g7-g20, conference, fundraising. Return exactly 5 briefs.';
+  var userMsg='Today is '+today+'. Generate 5 compelling LinkedIn post angles for George Vradenburg or the Davos Alzheimer Collaborative. Base them on real ongoing themes: AAIC 2026 in London (July), G7 brain capital agenda, blood-based Alzheimer diagnostics progress, AI and cognitive health, pension fund exposure to dementia costs, women brain health research. Make each feel timely and specific with a real-sounding headline and source.';
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:sysPrompt,messages:[{role:'user',content:userMsg}]})
+  }).then(function(r){return r.json();}).then(function(data){
+    btn.disabled=false;spin.style.display='none';
+    if(data.error){document.getElementById('briefs-list').innerHTML='<div class="empty"><strong>Error:</strong> '+escHtml(data.error.message)+'</div>';return;}
+    var text='';
+    if(data.content){for(var i=0;i<data.content.length;i++){if(data.content[i].type==='text')text+=data.content[i].text;}}
+    try{
+      var clean=text.replace(/```json|```/g,'').trim();
+      var s=clean.indexOf('{'),e=clean.lastIndexOf('}');
+      if(s>-1&&e>-1)clean=clean.substring(s,e+1);
+      var parsed=JSON.parse(clean);
+      renderBriefs(parsed.briefs||[]);
+    }catch(err){
+      document.getElementById('briefs-list').innerHTML='<div class="empty"><strong>Could not parse response</strong> - try scanning again.</div>';
+    }
+  }).catch(function(){
+    btn.disabled=false;spin.style.display='none';
+    document.getElementById('briefs-list').innerHTML='<div class="empty"><strong>Connection error</strong> - check your internet and try again.</div>';
+  });
+}
+
+function renderBriefs(briefs){
+  if(!briefs.length){document.getElementById('briefs-list').innerHTML='<div class="empty"><strong>No briefs found</strong>Try scanning again.</div>';return;}
+  var tmap={'brain-economy':'b-t','prevention':'b-g','womens-health':'b-p','ai-cognition':'b-b','alzheimers-research':'b-a','g7-g20':'b-ink'};
+  document.getElementById('briefs-list').innerHTML=briefs.map(function(b,i){
+    var tc=tmap[b.topic]||'b-gr';
+    return '<div class="news-card">'+
+      '<div class="news-hed">'+escHtml(b.headline||'')+'</div>'+
+      '<div class="news-meta">'+escHtml(b.source||'')+(b.date?'     '+escHtml(b.date):'')+' <span class="badge '+tc+'" style="margin-left:6px">'+escHtml(b.topic||'')+'  -  '+escHtml(b.voice||'')+'</span></div>'+
+      '<div class="news-angle">'+escHtml(b.angle||'')+'</div>'+
+      '<div class="news-actions">'+
+      '<button class="btn btn-p btn-sm" onclick="draftFromBrief('+i+')">  Draft in '+(b.voice||'GV')+' voice</button>'+
+      '</div></div>';
+  }).join('');
+  window._briefs=briefs;
+}
+
+function draftFromBrief(i){
+  var b=window._briefs[i];
+  if(!b)return;
+  sw('compose');
+  document.getElementById('c-acct').value=b.voice&&b.voice.indexOf('DAC')>-1?'DAC  -  Davos Alzheimer\'s Collaborative':'GV  -  George Vradenburg';
+  if(b.topic){document.getElementById('c-topic').value=b.topic;suggestTags();}
+  document.getElementById('c-copy').value='Context: '+b.headline+'\n\nAngle: '+b.angle;
+  generateVoice(b.voice&&b.voice.indexOf('DAC')>-1?'DAC':'GV');
+}
+
+//    TAG SUGGESTIONS   
+function suggestTags(){
+  var topic=document.getElementById('c-topic').value;
+  var copy=document.getElementById('c-copy').value.toLowerCase();
+  var tags=topic&&TAG_MAP[topic]?TAG_MAP[topic].slice():[];
+  if(copy.indexOf('women')>-1&&tags.indexOf('Lisa Mosconi PhD')===-1)tags.push('Lisa Mosconi PhD','#WomensBrainHealth');
+  if((copy.indexOf('maragall')>-1||copy.indexOf('barcelona')>-1)&&tags.indexOf('Fundacion Pasqual Maragall')===-1)tags.push('Fundacion Pasqual Maragall','Gloria Oliver (BBRC)');
+  if((copy.indexOf('aaic')>-1||copy.indexOf('london')>-1)&&tags.indexOf("Alzheimer's Association")===-1)tags.push("Alzheimer's Association","Alzheimer's Research UK");
+  if((copy.indexOf('g7')>-1||copy.indexOf('g20')>-1)&&tags.indexOf('Borge Brende (WEF)')===-1)tags.push('Borge Brende (WEF)','World Dementia Council');
+  if((copy.indexOf('pension')>-1||copy.indexOf('fiscal')>-1)&&tags.indexOf('Ray Dalio')===-1)tags.push('Ray Dalio','Christine Lagarde');
+  var seen={};tags=tags.filter(function(t){return seen[t]?false:(seen[t]=true);});
+  var box=document.getElementById('tag-box'),chips=document.getElementById('tag-chips');
+  if(!tags.length){box.style.display='none';return;}
+  box.style.display='block';
+  var cur=document.getElementById('c-tags').value.split('     ').map(function(s){return s.trim();}).filter(Boolean);
+  chips.innerHTML=tags.map(function(t){var on=cur.indexOf(t)>-1?' on':'';return '<span class="chip'+on+'" onclick="toggleChip(this,\''+t.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;')+'\')" >'+escHtml(t)+'</span>';}).join('');
+}
+
+function toggleChip(el,tag){
+  el.classList.toggle('on');
+  var input=document.getElementById('c-tags');
+  var cur=input.value.split('     ').map(function(s){return s.trim();}).filter(Boolean);
+  if(el.classList.contains('on')){if(cur.indexOf(tag)===-1)cur.push(tag);}
+  else{var i=cur.indexOf(tag);if(i>-1)cur.splice(i,1);}
+  input.value=cur.join('     ');
+}
+
+//    SAVE / CLEAR   
+function savePost(){
+  var copy=document.getElementById('c-copy').value.trim();
+  if(!copy){showToast('Please add post copy.','var(--red)');return;}
+  var acctVal=document.getElementById('c-acct').value;
+  var pd={
+    acct:acctVal.indexOf('GV')===0?'GV':'DAC',
+    type:document.getElementById('c-type').value,
+    topic:document.getElementById('c-topic').value||'general',
+    copy:copy,tags:document.getElementById('c-tags').value,
+    attach:document.getElementById('c-url').value||'',
+    date:document.getElementById('c-date').value||new Date().toISOString().split('T')[0],
+    status:document.getElementById('c-status').value,
+    theme:document.getElementById('c-theme').value.split(' - ')[0].trim(),
+    author:document.getElementById('c-author').value
+  };
+  var creds=getNotionCreds();
+  if(creds.token&&creds.db){saveToNotion(pd);}
+  else{pd.id=nextId++;posts.push(pd);showToast('Saved locally (Notion not connected).','var(--amber)');}
+  clearCompose();
+}
+
+function clearCompose(){
+  ['c-copy','c-tags','c-url','c-date'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('c-topic').value='';document.getElementById('c-status').value='draft';
+  document.getElementById('tag-box').style.display='none';document.getElementById('ai-result-box').style.display='none';
+}
+
+function showToast(msg,color){
+  var t=document.getElementById('toast');t.style.color=color;t.textContent=msg;t.style.display='inline';setTimeout(function(){t.style.display='none';},3000);
+}
+
+//    QUEUE   
+function fq(f,el){
+  qFilter=f;document.querySelectorAll('.fpill').forEach(function(p){p.classList.remove('on');});el.classList.add('on');renderQueue();
+}
+
+function renderQueue(){
+  var el=document.getElementById('queue-list');
+  var data=posts.filter(function(p){return qFilter==='all'||qFilter===p.acct||qFilter===p.status;});
+  data.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  if(!data.length){el.innerHTML='<div class="empty"><strong>Nothing here yet</strong>Posts you compose will appear here.</div>';return;}
+  el.innerHTML=data.map(function(p){
+    var ab=p.acct==='GV'?'<span class="badge b-b">GV</span>':'<span class="badge b-p">DAC</span>';
+    var sb=p.status==='draft'?'<span class="badge b-a">Draft</span>':p.status==='approved'?'<span class="badge b-g">Approved</span>':'<span class="badge b-gr">Posted</span>';
+    var approve=p.status==='draft'?'<button class="btn btn-g btn-sm" onclick="chSt('+p.id+',\'approved\')">Approve</button>':'';
+    var posted=p.status==='approved'?'<button class="btn btn-sm" onclick="chSt('+p.id+',\'posted\')">Mark posted</button>':'';
+    return '<div class="post-card '+p.status+'">'+
+      '<div class="post-meta">'+ab+' '+sb+' <span class="badge b-gr">'+escHtml(p.type)+'</span> <span style="font-size:11px;color:var(--ink-f)">'+escHtml(p.theme)+'     '+escHtml(p.author)+'</span></div>'+
+      '<div class="post-copy">'+escHtml(p.copy)+'</div>'+
+      (p.tags?'<div class="post-tags">  '+escHtml(p.tags)+'</div>':'')+
+      (p.attach?'<div style="font-size:11px;color:var(--ink-f);margin-top:2px">  '+escHtml(p.attach)+'</div>':'')+
+      '<div class="post-footer"><span class="post-date">  '+escHtml(p.date)+'</span>'+
+      '<div class="post-actions">'+approve+posted+
+      '<button class="btn btn-p btn-sm" onclick="cpPost('+p.id+')">  Copy for LinkedIn</button>'+
+      '<button class="btn btn-canva btn-sm" onclick="openCanvaModal()">  Graphic</button>'+
+      '<button class="btn btn-sm" style="color:var(--red)" onclick="rmPost('+p.id+')"> </button>'+
+      '</div></div></div>';
+  }).join('');
+}
+
+function chSt(id,s){posts=posts.map(function(p){return p.id===id?Object.assign({},p,{status:s}):p;});renderQueue();}
+function rmPost(id){if(confirm('Remove this post?')){posts=posts.filter(function(p){return p.id!==id;});renderQueue();}}
+function cpPost(id){
+  var p=posts.find(function(x){return x.id===id;});if(!p)return;
+  var txt=p.copy+(p.tags?'\n\n'+p.tags:'');
+  function flash(){var f=document.getElementById('copied-flash');f.style.display='block';setTimeout(function(){f.style.display='none';},2500);}
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(flash).catch(function(){prompt('Copy this:',txt);});}
+  else{prompt('Copy this:',txt);}
+}
+function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+//    CALENDAR   
+function renderCal(){
+  document.getElementById('cal-title').textContent=MONTHS[calMonth]+' '+calYear;
+  var today=new Date(),first=new Date(calYear,calMonth,1).getDay(),total=new Date(calYear,calMonth+1,0).getDate();
+  var days=['Su','Mo','Tu','We','Th','Fr','Sa'],h=days.map(function(d){return '<div class="cal-hdr">'+d+'</div>';}).join('');
+  for(var i=0;i<first;i++)h+='<div class="cal-day other"></div>';
+  for(var d=1;d<=total;d++){
+    var ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+    var dots=posts.filter(function(p){return p.date===ds;}).map(function(p){return '<div class="cal-dot '+p.acct.toLowerCase()+'">'+p.acct+': '+escHtml(p.topic.replace(/-/g,' ').split(' ')[0])+'</div>';}).join('');
+    h+='<div class="cal-day'+(isToday?' today':'')+'"><div class="cal-num">'+d+'</div>'+dots+'</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=h;
+}
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();}
+
+//    TARGETS   
+function renderTargets(data){
+  var sb=function(s){return s==='connected'?'<span class="badge b-g">Connected</span>':s==='verified'?'<span class="badge b-b">Verified</span>':'<span class="badge b-a">Lookup needed</span>';};
+  var fb=function(f){return f==='Urgent'?'<span class="badge b-r">Urgent</span>':f==='Weekly'?'<span class="badge b-ink">Weekly</span>':'<span class="badge b-gr">'+f+'</span>';};
+  document.getElementById('tgt-body').innerHTML=data.map(function(t){
+    return '<tr><td><span class="t-name">'+escHtml(t.n)+'</span><span class="t-role">'+escHtml(t.r)+'</span></td>'+
+    '<td><span class="'+(t.s==='gap'?'t-handle none':'t-handle')+'">'+escHtml(t.h)+'</span></td>'+
+    '<td style="font-size:12px;color:var(--ink-l)">'+escHtml(t.f)+'</td>'+
+    '<td>'+fb(t.freq)+'</td><td>'+sb(t.s)+'</td>'+
+    '<td><span class="t-why">'+escHtml(t.w)+'</span></td></tr>';
+  }).join('');
+}
+function filterTgts(){
+  var q=document.getElementById('tq').value.toLowerCase(),freq=document.getElementById('tf').value,status=document.getElementById('ts').value;
+  renderTargets(TARGETS.filter(function(t){return(!q||(t.n+t.r+t.w).toLowerCase().indexOf(q)>-1)&&(!freq||t.freq===freq)&&(!status||t.s===status);}));
+}
+
+//    CANVA   
+function openCanvaModal(){document.getElementById('canva-modal').className='modal-overlay open';}
+function closeCanvaModal(){document.getElementById('canva-modal').className='modal-overlay';}
+function openCanva(type){
+  var url=CANVA_URLS[type];
+  if(url.indexOf('CANVA_TEMPLATE_URL')>-1){
+    alert('Template not yet linked.\n\nTo link this template:\n1. Open Canva and create or open your template\n2. Click Share   Copy link\n3. Paste the URL into the CANVA_URLS object in the code, replacing CANVA_TEMPLATE_URL_'+type.toUpperCase()+'\n\nYour team only needs to do this once per template.');
+  } else {
+    window.open(url,'_blank');
+  }
+}
+document.getElementById('canva-modal').addEventListener('click',function(e){if(e.target===this)closeCanvaModal();});
+
+
+//    API KEY MANAGEMENT   
+function getApiKey(){return localStorage.getItem('dac_hub_api_key')||'';}
+function saveApiKey(){
+  var k=document.getElementById('api-key-input').value.trim();
+  var errEl=document.getElementById('setup-err');
+  var btn=document.querySelector('#setup-overlay .btn-p');
+  if(!k.startsWith('sk-ant')){errEl.textContent='Key must start with sk-ant';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  if(btn){btn.textContent='Testing...';btn.disabled=true;}
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
+  }).then(function(r){return r.json();}).then(function(data){
+    if(btn){btn.textContent='Save & start';btn.disabled=false;}
+    if(data.error){
+      var msg='Error: '+data.error.message;
+      if(data.error.type==='authentication_error')msg='Key not recognised  -  copy it again from console.anthropic.com.';
+      if(data.error.type==='billing_error'||data.error.type==='credit_balance_error')msg='Key valid but no credits  -  add funds at console.anthropic.com.';
+      errEl.textContent=msg;errEl.style.display='block';return;
+    }
+    localStorage.setItem('dac_hub_api_key',k);
+    document.getElementById('setup-overlay').style.display='none';
+    document.getElementById('api-status').textContent='AI ready';
+    document.getElementById('api-status').className='api-status ok';
+  }).catch(function(){
+    if(btn){btn.textContent='Save & start';btn.disabled=false;}
+    errEl.textContent='Could not verify key  -  if opening from a file:// URL, click Skip for now and the key will still be saved for local use.';
+    localStorage.setItem('dac_hub_api_key',k);
+    document.getElementById('setup-overlay').style.display='none';
+    document.getElementById('api-status').textContent='AI ready';
+    document.getElementById('api-status').className='api-status ok';
+  });
+}
+
+function skipSetup(){
+  document.getElementById('setup-overlay').style.display='none';
+  document.getElementById('api-status').textContent='No API key';
+  document.getElementById('api-status').className='api-status';
+}
+function checkKeyOnLoad(){
+  var k=getApiKey();
+  if(k){
+    document.getElementById('setup-overlay').style.display='none';
+    document.getElementById('api-status').textContent='AI ready';
+    document.getElementById('api-status').className='api-status ok';
+  }
+}
+function resetApiKey(){
+  localStorage.removeItem('dac_hub_api_key');
+  document.getElementById('api-key-input').value='';
+  document.getElementById('setup-overlay').style.display='flex';
+}
+
+
+//    NOTION   
+function getNotionCreds(){return {token:localStorage.getItem('dac_notion_token')||'',db:localStorage.getItem('dac_notion_db')||''};}
+function toggleNotionSetup(){
+  var f=document.getElementById('notion-setup-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  var c=getNotionCreds();
+  if(c.token)document.getElementById('notion-token').value=c.token;
+  document.getElementById('notion-db-id').value=c.db||'3674a8103166801ba7d0ef5b93ec76a8';
+}
+function saveNotionCreds(){
+  var t=document.getElementById('notion-token').value.trim();
+  var d=document.getElementById('notion-db-id').value.trim().replace(/-/g,'');
+  var msg=document.getElementById('notion-conn-msg');
+  if(!t||!d){msg.style.color='var(--red)';msg.textContent='Enter both fields.';msg.style.display='inline';return;}
+  localStorage.setItem('dac_notion_token',t);
+  localStorage.setItem('dac_notion_db',d);
+  msg.style.color='var(--green)';msg.textContent='Connecting...';msg.style.display='inline';
+  doNotionQuery(t,d,function(ok,err){
+    if(ok){msg.textContent='Connected!';checkNotionBanner();document.getElementById('notion-setup-form').style.display='none';}
+    else{msg.style.color='var(--red)';msg.textContent='Failed: '+err;}
+  });
+}
+function checkNotionBanner(){
+  var c=getNotionCreds();
+  if(c.token&&c.db){
+    var b=document.getElementById('notion-banner');
+    var t=document.getElementById('notion-banner-title');
+    var s=document.getElementById('notion-banner-sub');
+    if(b)b.style.background='var(--green)';
+    if(t)t.textContent='Queue syncing with Notion  ';
+    if(s)s.textContent='Posts from all team members appear here in real time.';
+  }
+}
+function loadQueue(){
+  var c=getNotionCreds();
+  if(c.token&&c.db){doNotionQuery(c.token,c.db,null);}
+  else{renderLocalPosts();}
+}
+function notionCall(endpoint,method,token,payload,onSuccess,onError){
+  fetch('/api/notion',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({endpoint:endpoint,method:method,token:token,payload:payload})
+  }).then(function(r){
+    if(r.status===404){
+      return fetch(endpoint,{
+        method:method||'POST',
+        headers:{'Authorization':'Bearer '+token,'Notion-Version':'2022-06-28','Content-Type':'application/json'},
+        body:payload?JSON.stringify(payload):undefined
+      }).then(function(r2){return r2.json();});
+    }
+    return r.json();
+  }).then(onSuccess).catch(onError);
+}
+function doNotionQuery(token,db,cb){
+  var el=document.getElementById('queue-list');
+  el.innerHTML='<div class="empty">Loading...</div>';
+  notionCall(
+    'https://api.notion.com/v1/databases/'+db+'/query','POST',token,
+    {sorts:[{property:'Scheduled Date',direction:'ascending'}]},
+    function(d){
+      if(d.status===401){el.innerHTML='<div class="empty"><strong>Auth failed</strong> - check your Notion token.</div>';if(cb)cb(false,'auth failed');return;}
+      if(d.status===404){el.innerHTML='<div class="empty"><strong>Database not found</strong> - check the ID.</div>';if(cb)cb(false,'not found');return;}
+      if(!d.results){el.innerHTML='<div class="empty">Error: '+(d.message||'unknown')+'</div>';if(cb)cb(false,d.message||'unknown');return;}
+      window._nPages=d.results;renderNotionPosts(d.results);if(cb)cb(true,null);
+    },
+    function(e){el.innerHTML='<div class="empty"><strong>Connection error:</strong> '+e.message+'</div>';if(cb)cb(false,e.message);}
+  );
+}
+function getProp(page,name,type){
+  var p=page.properties&&page.properties[name];if(!p)return '';
+  if(type==='title')return p.title&&p.title.length?p.title[0].plain_text:'';
+  if(type==='text')return p.rich_text&&p.rich_text.length?p.rich_text[0].plain_text:'';
+  if(type==='select')return p.select?p.select.name:'';
+  if(type==='date')return p.date?p.date.start:'';
+  return '';
+}
+function renderNotionPosts(pages){
+  var el=document.getElementById('queue-list');
+  if(!pages.length){el.innerHTML='<div class="empty"><strong>Queue is empty</strong><br>Compose a post to get started.</div>';return;}
+  el.innerHTML=pages.map(function(p){
+    var acct=getProp(p,'Account','select')||'GV';
+    var st=(getProp(p,'Status','select')||'Draft').toLowerCase();
+    var copy=getProp(p,'Post Copy','text');
+    var tags=getProp(p,'Tags','text');
+    var date=getProp(p,'Scheduled Date','date');
+    var author=getProp(p,'Author','select');
+    var theme=getProp(p,'Theme','select');
+    var type=getProp(p,'Type','select')||'Post';
+    var ab=acct==='GV'?'<span class="badge b-b">GV</span>':'<span class="badge b-p">DAC</span>';
+    var sb=st==='draft'?'<span class="badge b-a">Draft</span>':st==='approved'?'<span class="badge b-g">Approved</span>':'<span class="badge b-gr">Posted</span>';
+    var pid=p.id;
+    var appBtn=st==='draft'?'<button class="btn btn-g btn-sm" onclick="updateNStatus(\'' +pid+ '\',\'Approved\')">Approve</button>':'';
+    var postBtn=st==='approved'?'<button class="btn btn-sm" onclick="updateNStatus(\'' +pid+ '\',\'Posted\')">Mark posted</button>':'';
+    var cpBtn='<button class="btn btn-p btn-sm" onclick="cpNPost(\'' +pid+ '\')">&#128203; Copy for LinkedIn</button>';
+    return '<div class="post-card '+st+'">'+
+      '<div class="post-meta">'+ab+' '+sb+' <span class="badge b-gr">'+escHtml(type)+'</span>'+(theme?' <span style="font-size:11px;color:var(--ink-f)">'+escHtml(theme)+'</span>':'')+(author?' <span style="font-size:11px;color:var(--ink-f)">'+escHtml(author)+'</span>':'')+'</div>'+
+      '<div class="post-copy">'+(copy?escHtml(copy):'<em style="color:var(--ink-f)">No copy yet</em>')+'</div>'+
+      (tags?'<div class="post-tags">&#8627; '+escHtml(tags)+'</div>':'')+
+      '<div class="post-footer"><span class="post-date">&#128197; '+(date||'No date')+'</span>'+
+      '<div class="post-actions">'+appBtn+postBtn+cpBtn+
+      '</div></div></div>';
+  }).join('');
+}
+function renderLocalPosts(){
+  var el=document.getElementById('queue-list');
+  var data=posts.filter(function(p){return qFilter==='all'||qFilter===p.acct||qFilter===p.status;});
+  data.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  if(!data.length){el.innerHTML='<div class="empty"><strong>Nothing here yet</strong><br>Connect Notion above to share posts with your team, or compose a post to start.</div>';return;}
+  el.innerHTML=data.map(function(p){
+    var ab=p.acct==='GV'?'<span class="badge b-b">GV</span>':'<span class="badge b-p">DAC</span>';
+    var sb=p.status==='draft'?'<span class="badge b-a">Draft</span>':p.status==='approved'?'<span class="badge b-g">Approved</span>':'<span class="badge b-gr">Posted</span>';
+    var lid=p.id;
+    var lappBtn=p.status==='draft'?'<button class="btn btn-g btn-sm" onclick="chSt('+lid+',\'approved\')">Approve</button>':'';
+    var lpostBtn=p.status==='approved'?'<button class="btn btn-sm" onclick="chSt('+lid+',\'posted\')">Mark posted</button>':'';
+    var lcpBtn='<button class="btn btn-p btn-sm" onclick="cpLPost('+lid+')">&#128203; Copy</button>';
+    return '<div class="post-card '+p.status+'">'+
+      '<div class="post-meta">'+ab+' '+sb+'</div>'+
+      '<div class="post-copy">'+escHtml(p.copy)+'</div>'+
+      (p.tags?'<div class="post-tags">'+escHtml(p.tags)+'</div>':'')+
+      '<div class="post-footer"><span class="post-date">'+escHtml(p.date)+'</span>'+
+      '<div class="post-actions">'+lappBtn+lpostBtn+lcpBtn+
+      '</div></div></div>';
+  }).join('');
+}
+function cpNPost(id){var p=window._nPages&&window._nPages.find(function(x){return x.id===id;});if(!p)return;doCopy(getProp(p,'Post Copy','text')+(getProp(p,'Tags','text')?'\n\n'+getProp(p,'Tags','text'):''));}
+function cpLPost(id){var p=posts.find(function(x){return x.id===id;});if(!p)return;doCopy(p.copy+(p.tags?'\n\n'+p.tags:''));}
+function doCopy(txt){function fl(){var f=document.getElementById('copied-flash');if(f){f.style.display='block';setTimeout(function(){f.style.display='none';},2500);}}if(navigator.clipboard){navigator.clipboard.writeText(txt).then(fl).catch(function(){prompt('Copy:',txt);});}else{prompt('Copy:',txt);}}
+function updateNStatus(pageId,newStatus){
+  var c=getNotionCreds();
+  if(!c.token){alert('Not connected to Notion.');return;}
+  notionCall(
+    'https://api.notion.com/v1/pages/'+pageId,'PATCH',c.token,
+    {properties:{Status:{select:{name:newStatus}}}},
+    function(){loadQueue();},
+    function(){alert('Could not update status.');}
+  );
+}
+function saveToNotion(pd){
+  var c=getNotionCreds();
+  var props={
+    'Name':{title:[{text:{content:pd.acct+' - '+new Date().toLocaleDateString()}}]},
+    'Post Copy':{rich_text:[{text:{content:pd.copy}}]},
+    'Account':{select:{name:pd.acct}},
+    'Type':{select:{name:pd.type}},
+    'Status':{select:{name:pd.status.charAt(0).toUpperCase()+pd.status.slice(1)}},
+    'Author':{select:{name:pd.author}},
+    'Tags':{rich_text:[{text:{content:pd.tags||''}}]}
+  };
+  if(pd.theme)props['Theme']={select:{name:pd.theme}};
+  if(pd.topic)props['Topic']={select:{name:pd.topic}};
+  if(pd.date)props['Scheduled Date']={date:{start:pd.date}};
+  notionCall(
+    'https://api.notion.com/v1/pages','POST',c.token,
+    {parent:{database_id:c.db},properties:props},
+    function(d){
+      if(d.id){showToast('Saved to Notion - visible to whole team.','var(--green)');}
+      else{showToast('Notion error: '+(d.message||'unknown'),'var(--red)');}
+    },
+    function(){showToast('Could not reach Notion.','var(--amber)');pd.id=nextId++;posts.push(pd);}
+  );
+}
+function chSt(id,s){posts=posts.map(function(p){return p.id===id?Object.assign({},p,{status:s}):p;});renderLocalPosts();}
+
+//    INIT   
+renderTargets(TARGETS);renderCal();checkKeyOnLoad();checkNotionBanner();
+</script>
+
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-box">
+    <div class="setup-title">Welcome to DAC · GV Social Hub</div>
+    <div class="setup-sub">To enable AI features — voice generation, news briefs, and post rewrites — enter your Anthropic API key. It's saved only in your browser and never shared.</div>
+    <div class="setup-steps">
+      <strong>Get your API key in 2 minutes:</strong><br>
+      1. Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+      2. Sign in or create a free account<br>
+      3. Click <strong>API Keys → Create Key</strong><br>
+      4. Copy and paste it below
+    </div>
+    <div class="setup-input-row">
+      <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
+      <button class="btn btn-p" onclick="saveApiKey()">Save &amp; start</button>
+    </div>
+    <div class="setup-err" id="setup-err">Key must start with sk-ant — please check and try again.</div>
+    <div class="setup-skip" onclick="skipSetup()">Skip for now — use tool without AI features</div>
+  </div>
+</div>
+</body>
+</html>
